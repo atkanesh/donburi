@@ -1,0 +1,739 @@
+<html>
+	<p id="alert">Type ? and click Enter for help</p> 
+	<input type="text" name="enter" id="cmd" style="background-color:black;color:rgb(255, 210, 76)" >
+	<input type="button" name="enter" id="enter" value="enter" onclick="enter()">
+	<p id="output"></p>
+	<body style="background-color: black; font-family: courier;">
+		<body text="#ffcc00">
+			
+</body>
+<script>
+
+
+
+	function init() {
+    // Clear forms here
+    document.getElementById("cmd").value = "";
+}
+window.onload = init;
+// Game variables 
+
+// Coordinates
+	var a = 2;
+	var b = 5;
+	var g = "You enter the bank";
+	var f = "Catch successful";
+	var y = 0;
+	var x = 0;
+	var xlow = 0;
+	var xhigh = 5;
+	var ylow = 0;
+	var yhigh = 5;
+	var deadend = false;
+	
+
+// puzzles
+	var ctr1 = 0;
+	var ctr2 = 0;
+	var atmempty = false;
+
+// event based
+	//world1
+	var girlVar = true;	
+	var crossbow = true;
+	var deathstate = false;
+	var glassState = true;
+	var dogState = true;
+	var scene1 = false;
+	var scene2 = false;
+	//mansion
+	var cblock1 = " There is a cinderblock here.";
+	var cblock2 = " There is a cinderblock here.";
+	var cblock3 = " There is a cinderblock here.";
+	var cblockstate1 = true;
+	var cblockstate2 = true;
+	var cblockstate3 = true;
+	var cblockq = 0;
+	var obstacle = " Dead End.";
+	var werewolf = " The werewolf is sleeping here.";
+	var cblockkitchen = 0;
+	var cblockHP = 0;
+	var werewolfHP = 100;
+	var attackFactor = 0;
+	var wineState = false;
+	var wineItemState1 = true;
+	var wineItemState2 = false;
+	var wineItem = " There is a bottle of wine here.";
+	var wine = 0;
+	var wolfBattleEvent = false;
+
+//world descriptions
+	var desc1 = " There is a plaque here. It reads 'Here lies the 5 brave men who died in the Logitech submarine.'";
+	var desc2 = " There is some graffiti here of Fred Flintstone.";
+	var desc3 = " There is a group of seagulls here.";
+	var desc4 = " There is a dumpster here.";
+
+//events
+function getRandomInt(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+	//mansion
+function wereWolfLimit() {
+	if (werewolfHP < 1) {
+		werewolfHP = 1;
+	}
+}	
+
+async function wolfbattle() {
+	document.getElementById("output").innerHTML = ("The Werewolf opens the trash!");
+	werewolfHP = 100;
+	cblockHP = cblockkitchen * 25;
+	await sleep(5000);
+	if (wineState === true) {
+		var wine = 40;
+		document.getElementById("output").innerHTML = ("The Werewolf finds a bottle of wine and drinks it. He loses 40 HP!");
+		werewolfHP = werewolfHP - 40;
+		await sleep(5000);
+	}
+
+	if (cblockHP > 0) {  
+		document.getElementById("output").innerHTML = ("The Werewolf with " + werewolfHP + " HP smashes the cinderblock with " + cblockHP + " HP!");
+		attackFactor = getRandomInt(25, 30);
+		werewolfHP = werewolfHP - cblockHP - attackFactor;
+		wereWolfLimit();
+		await sleep(5000);
+		document.getElementById("output").innerHTML = ("The Werewolf has " + werewolfHP + " HP after his slash of rage!");
+		await sleep(5000);
+	}
+	
+		document.getElementById("output").innerHTML = ("The Werewolf finds a giant white cake in the trash and begins to feast!");
+		var cakeCrumbs = 10;
+		var crumbBounceFactor = getRandomInt(30, 50);
+		
+		cakeCrumbs = cakeCrumbs + crumbBounceFactor + werewolfHP;
+		await sleep(5000);
+		document.getElementById("output").innerHTML = ("The cake crumbs bounce " + cakeCrumbs + " feet from the kitchen as he dances through the mansion!");
+		await sleep(5000);
+							
+	if (cakeCrumbs > 100) {  
+		document.getElementById("output").innerHTML = ("In the morning, Mrs. Moneybags comes home from burning man with a bearded man. She has Jeeves perform a white glove test in the entryway. The cake crumbs are in the doorway. 'Why is this mansion completely messed up? INCOMPETENT task rabbit, I cast the spell of transformation. She waves her hands and you turn into a nutria rat. ***** YOU DIED");
+		deathstate = true;
+		setTimeout(death, 20000);						
+	}
+	if (cakeCrumbs < 100) {
+		document.getElementById("output").innerHTML = ("In the morning, Mrs. Moneybags comes home from burning man and has Jeeves perform a white glove test. She marvels at how clean the entryway is. 'You are quite an amazing Task Rabbit. You can accompany me to Dubai tomorrow. Did you say your name was Jody?' ***** THE END");
+	
+    	wolfBattleEvent = true;
+		endingState = true;
+		setTimeout(ending, 20000);
+}
+
+}
+
+//cutscenes
+function s1() {
+	if (scene1 == false) {
+	document.getElementById("output").innerHTML = ("You are standing at the edge of a river. 'I wonder how I got here', you say to yourself. I must be a protagonist approaching the early stages of adult emotional development. Therefore, I must survive through a dreamlike realm vaguely inspired by Night of the Living Dead, while I work my way through the horror of plot devices that are common in an 80's Soap Opera.");
+	scene1 = true;
+	}
+}
+
+s1();
+
+function s2() {
+	document.getElementById("output").innerHTML = ("A man walks into the alley slowly. 'You don't remember do you? That you had a twin brother who was hospitalized after becoming a cult leader, and inventing a zombie virus? Of course you wouldn't.' You try to respond, but he runs away, laughing maniacally.")
+	scene2 = true;
+}
+
+function s3() {
+document.getElementById("output").innerHTML = ("You enter the mansion. An older woman in a red dress is standing there with luggage. 'Oh great, the task rabbit is here. I'm about to go to Burning Man.' Talk to Jeeves, he'll tell you what to do next. She leaves and gets into a limousine. It drives away. The butler Jeeves approaches you. 'You are to watch the mansion, but Mrs. Moneybags has a giant pet werewolf. He has a tendency to get into the trash and make a mess.'");
+	scene3 = true;
+}
+
+// define inventory, and game arrays
+
+let Inventory = [" car key", " empty wallet", " ", " hammer", " "];
+
+let Inventory1 = [" car key", " empty wallet", " ", " hammer", " "];
+
+let pass1 = ["0", "0", "0"];
+
+let house = [
+	    ["the laundry room. There is a rusty metal statue of Medusa here with a keyhole in its forehead."],
+	    ["the bedroom"],
+		["the kitchen"],
+	    ["the living room"],
+	    ["the yard. type 'e gate' to leave."],
+];
+
+let mansion = [
+	    ["The entry way. There is a large chandelier and beveled glass windows. Jeeves is standing here." + cblock1, " a long brick hallway. There are doors to the east and west.", " a room with a pool table.", obstacle, " a dining room with candles everwhere.", " a room with a piano."],
+	    ["a bathroom", obstacle, " a library full of old books.", " a dark hallway with doors to the east and west." + wineItem, " a room full of weird taxidermy.", " a creepy dungeon with torture devices."],
+		["the kitchen", obstacle, " a kitchen with a huge trash can.", obstacle, " a lounge with tacky gold 70s era furniture.", " a bathroom with a hot tub shaped like a skull." + cblock3],
+	    ["a sun room." + cblock2, " a room full of chew toys and cushions." + werewolf, " a gallery full of grotesque paintings", obstacle, obstacle, "a secret passage." ],
+	    ["a bar room.", " a bedroom", " a guest bedroom", " a study", " a theater", " a secret stairway"],
+		[obstacle, obstacle, obstacle, " a pantry full of vegan food", " a home gym", obstacle],
+];
+
+let world1 = [
+	["a wall.", "a creepy motel. Type 'e motel' to enter.", "the lake." + desc1, "a wall." + desc2, "a wall." + desc3, "a wall." + desc4], 
+	["a mansion. Type e mansion to enter.", "Brother's chicken. There is a crossbow here.", " a bar. A girl is here.", "a liquor store.", "a church.", "the river."], 
+	["a brick wall.", "a park. There is a man in a clown costume here.", "a bank.", "a dirty alleyway.", "a mcdonalds.", "the river."],
+	["a lake", "road", "walgreens", "a dark alleyway. There is a car here.", "a dark street", "the river."],
+	["a fence", "train tracks", "the front yard of a house. type 'e house' to enter.", "tunnel", "a bar", "the river."],
+	["a room with an ATM.", "a wall", "a wall", "a wall", "a wall", "a wall"], 
+
+];
+
+let world = world1;
+
+// death function
+
+function death() {
+	if (deathstate === true) {
+	c = '';
+	location.reload();
+		}
+		}
+
+// Ending functions
+
+function ending() {
+	if (endingState === true) {
+		c = '';
+	location.reload();
+	}
+}
+
+// password functions
+
+function pass1limit() {
+if (ctr1 == 3) {
+	document.getElementById("output").innerHTML = ("A buzzer goes off and the ATM says: 'Wrong password, try again.' ");
+		ctr1 == 0;
+		pass1 = ["0", "0", "0"];
+}
+}
+
+// item usages and functions
+	//world1
+function bible() {
+	document.getElementById("output").innerHTML = ("A page is dog eared. It reads: 'Exodus 25:4  Blue and purple and scarlet yarns and fine twined linen, goats hair'");
+		}
+
+function key1() {
+	Inventory[0] = " bible";
+	document.getElementById("output").innerHTML = ("You unlocked the car but it won't start. You find a bible and take it with you.");
+		}
+	//mansion
+function itemstates() {
+	if (crossbow === false) {
+		world[1][1] = " Brother's Chicken.";
+			}
+	if (cblockstate1 === false) {
+		mansion[0][0] = " The entry way. There is a large chandelier and beveled glass windows. Jeeves is here, reading a Scientology book.";
+			}
+	if (cblockstate2 === false) {
+		mansion[3][0] = " A sun room.";
+			}
+	if (cblockstate3 === false) {
+		mansion[2][5] = " A bathroom with a hot tub shaped like a skull.";
+			}
+	if (wineItemState1 === false) {
+		mansion[1][3] = " a dark hallway with doors to the east and west.";
+			}
+	if (wineItemState2 === true) {
+		mansion[3][1] = " a room full of chew toys and cushions." + werewolf + " There is a bottle of wine sitting next to him.";
+			}
+			}
+
+// navigation boundaries
+
+function border() {
+
+if (y < ylow)
+	{
+		document.getElementById("output").innerHTML = ("Dead End.");
+	deadend = true;
+	return;
+	}
+	
+if (x < xlow)
+	{
+		document.getElementById("output").innerHTML = ("Dead End.");
+	deadend = true;
+	return;
+	}
+
+if (y > yhigh)
+	{
+		document.getElementById("output").innerHTML = ("Dead End.");
+	deadend = true;
+	return;
+	}
+
+if (x > xhigh)
+	{
+		document.getElementById("output").innerHTML = ("Dead End.");
+	deadend = true;
+	return;
+	}
+
+if (world[y][x] == obstacle){
+	document.getElementById("output").innerHTML = ("Dead End.");
+	deadend = true;
+}
+			}
+
+
+// Entering data, command specific and location specific events
+
+function enter() {
+	
+var c = document.getElementById("cmd").value;
+
+c = c.toLowerCase(); 
+
+switch (c) {
+
+case "test": {
+	endingState = true;
+	ending();
+}
+break;
+
+case "s":
+++y;
+border();
+
+if (deadend == true) {
+	--y;
+	deadend = false;
+				return;
+						}
+	
+itemstates();
+document.getElementById("output").innerHTML = ('you see ' + world[y][x]);
+
+break;
+
+case "n":
+--y;
+border();
+	if (deadend == true) {
+		++y;
+		deadend = false;
+				return;
+	}
+itemstates();
+document.getElementById("output").innerHTML = ('you see ' + world[y][x]);
+break;
+
+case "e":
+++x;
+border();
+if (deadend == true) {
+	--x;
+	deadend = false;
+				return;
+	}
+itemstates();
+document.getElementById("output").innerHTML = ('you see ' + world[y][x]);
+break;
+
+case "w":
+--x;
+border();
+if (deadend == true) {
+	++x;
+	deadend = false;
+				return;
+						}
+itemstates();
+document.getElementById("output").innerHTML = ('you see ' + world[y][x]);
+
+break;
+
+case "e motel":
+	if (x == 1 && y == 0) {
+		document.getElementById("output").innerHTML = ('There are four doors. 1, 2, 3, 4. Door 4 has loud music coming from it and empty beer cans infront. Type a number and click enter');
+	break;
+				}
+
+case "1":
+	if (x == 1 && y == 0 && glassState === true && dogState === true && world == world1) {
+		document.getElementById("output").innerHTML = ("You enter a dark motel room. There is a large glass jug with a rusty key in it. There is a giant, mean looking dog curled around it. He is sleeping.");
+		break;
+						}
+	if (x == 1 && y == 0 && glassState === true && dogState === false && world == world1) {
+		document.getElementById("output").innerHTML = ("You enter a dark motel room. There is a large glass jug with a rusty key in it. The giant, mean looking dog is dead.");
+		break;
+						}
+	
+	if (x == 1 && y == 0 && glassState === false && world == world1) {
+		document.getElementById("output").innerHTML = ('You enter a dark motel room. There is a broken glass jug. It is empty. The giant, mean looking dog is dead.');
+		break;
+						}
+	break;
+
+case "l dumpster":
+	if (x == 5 && y == 0 && scene2 == false && world == world1) {
+		s2();
+		break;
+	}
+
+case "u hammer":
+	if (x == 1 && y == 0 && glassState === true && dogState === true && world == world1) {
+		document.getElementById("output").innerHTML = ("You raise your hammer to break the glass jug, but think twice. You wouldn't want to wake up the dog.");
+		break;
+		}
+	if (x == 1 && y == 0 && glassState === true && dogState === false && world == world1) {
+		document.getElementById("output").innerHTML = ("You break the glass and take the rusty key.");
+		glassState = false;
+		Inventory[4] = " rusty key";
+		break;
+						}	
+	break;
+
+
+
+case "u crossbow":
+	if (x == 1 && y == 0 && glassState === true && dogState === true && Inventory[2] === " Crossbow" && world == world1) {
+		document.getElementById("output").innerHTML = ("You fire the arrow into the dogs head and it dies. Better him than you.");
+		dogState = false;
+		break;
+						}
+	break;
+
+case "2":
+	if (x == 1 && y == 0 && world == world1) {
+		document.getElementById("output").innerHTML = ('Locked.');
+	break;
+				}
+
+case "3":
+	if (x == 1 && y == 0 && world == world1) {
+		document.getElementById("output").innerHTML = ('Locked.');
+	break;
+				}
+
+case "4":
+	if (x == 1 && y == 0 && world == world1) {
+		document.getElementById("output").innerHTML = ('A man comes outside and hits you with a bat. *** YOU DIED.***');
+	deathstate = true;
+	setTimeout(death, 7000);
+	break;
+				}
+case "l":
+	{
+	itemstates();
+	document.getElementById("output").innerHTML = ('you see ' + world[y][x]);	
+	}
+
+case "l girl":
+	if (x == 2 && y == 1 && ctr2 == 0 && world == world1) {
+	document.getElementById("output").innerHTML = ('She is smoking.');
+	++ctr2;
+					break;
+					}
+	
+
+	if (x == 2 && y == 1 && ctr2 == 1 && world == world1) {
+	document.getElementById("output").innerHTML = ('She is using her phone.');
+	++ctr2;
+					break;
+					}
+
+	if (x == 2 && y == 1 && ctr2 == 2 && world == world1) {
+	document.getElementById("output").innerHTML = ("She looks at you and says: 'The f*** are you starin at?'");
+	ctr2 = 0;
+					break;
+					}
+	break;
+
+
+
+case "e house":
+	if (x == 2 && y == 4 && world == world1) {
+	document.getElementById("output").innerHTML = ("You entered the house.");
+		x = 0;
+		y = 4;
+	world = house;
+	xlow = 0;
+	xhigh = 0;
+	ylow = 0;
+	yhigh = 4;
+	}
+			
+	break;
+
+case "e gate":
+	if (x == 0 && y == 4 && world == house) {
+	document.getElementById("output").innerHTML = ("You are back outside.");
+	world = world1;
+	xlow = 0;
+	xhigh = 5;
+	ylow = 0;
+	yhigh = 5;
+	}
+	break;
+
+case "i":
+border();
+document.getElementById("output").innerHTML = ('Inventory:' + Inventory);
+break;
+
+case "?":
+
+document.getElementById("output").innerHTML = (
+" w, n, e, s, - move in each direction. u item - use an item. l subject - look at something. i - inventory g object - get object e place - enter a place t person - talk to person ? - help"
+);
+break;
+
+// world1 events
+case "u car key":
+	if (x == 3 && y == 3 && Inventory[0] == ' car key' && world == world1) {
+			key1();
+			
+				}
+	break;
+
+case "g crossbow":
+	if (x == 1 && y == 1 && world == world1) {
+	document.getElementById("output").innerHTML = ("You got the crossbow.")
+		Inventory[2] = " Crossbow";
+		crossbow = false;
+		world[1][1] = " Brother's Chicken.";
+				}
+	break;
+	
+case "u bible":
+	if (Inventory[0] == ' bible' && world == world1) {
+	bible();
+			}
+	break;
+
+case "u atm":
+	 if (x == 0 && y == 5 && world == world1)
+	 			{
+				ctr1 = 0;
+		document.getElementById("output").innerHTML = ("There are six buttons. Orange, Blue, Green, Red, White, and Purple. ***Type in a Color and hit enter.");
+			pass1 = ["0", "0", "0",];
+				}
+	break;
+
+
+case "t girl":
+	if (x == 2 && y == 1 && world == world1) 
+				{
+		document.getElementById("output").innerHTML = ("*** ERROR *** this is not a Japanese dating simulator.");		
+				}
+	break;
+
+case "t clown":
+	if (x == 1 && y == 2 && world == world1)
+				{
+		document.getElementById("output").innerHTML = ("The clown says: 'Don't worry, I'm a lot less scary in the remake.'");	
+				}
+	break;
+
+case "blue":
+	if (x == 0 && y == 5 && ctr1 == 0 && world == world1)
+				{
+				pass1[0] = 1;
+				++ctr1;
+				pass1limit();
+				break;
+				}
+	if (x == 0 && y == 5 && ctr1 != 0 && world == world1)
+				{
+				++ctr1;
+				pass1limit();
+				break;
+				}
+
+	break;
+
+case "purple":
+	if (x == 0 && y == 5 && pass1[0] == 1 && ctr1 == 1 && world == world1)
+				{
+				pass1[1] = 1;
+				++ctr1;
+				pass1limit();
+				break;
+				}
+	if (x == 0 && y == 5 && ctr1 < 3)
+				{
+				++ctr1;
+				pass1limit();
+				break;
+				}
+	break;
+
+case "red":
+	if (x == 0 && y == 5 && pass1[0] == 1 && pass1[1] == 1 && ctr1 == 2 && atmempty == false && world == world1)
+				{
+				pass1[2] = 1;
+				++ctr1;
+				document.getElementById("output").innerHTML = ("The ATM blinks. You have opened MC Hammer's bank account. You get 5 dollars.");
+				Inventory[1] = " wallet with 5 dollars";
+				atmempty = true;
+				break;
+				}
+	if (x == 0 && y == 5 && pass1[0] == 1 && pass1[1] == 1 && ctr1 == 2 && atmempty == true && world == world1)
+				{
+				document.getElementById("output").innerHTML = ("The ATM blinks. You have opened MC Hammer's bank account. It contains 0 dollars");
+				break;
+				}
+	if (x == 0 && y == 5 && ctr1 < 3)
+				{
+				++ctr1;
+				pass1limit();
+				break;
+				}
+	break;
+
+case "orange":
+if (x == 0 && y == 5 && world == world1)
+				{
+				++ctr1;
+				pass1limit();
+				}
+	break;
+
+case "green":
+	if (x == 0 && y == 5 && world == world1)
+				{
+				++ctr1;
+				pass1limit();
+				}
+	break;
+
+case "white":
+	if (x == 0 && y == 5 && world == world1)
+				{
+				++ctr1;
+				pass1limit();
+				}
+	break;
+// mansion events
+
+case "g wine":
+	if (x == 3 && y == 1 && world == mansion && wineItemState1 == true) {
+		document.getElementById("output").innerHTML = ("You get the wine.");
+		Inventory[6] = " Wine";
+		wineItemState1 = false;
+		wineItem = "     ";
+	}
+
+break;
+
+case "e mansion":
+	if (x == 0 && y == 1 && world == world1) {
+		s3();
+		x = 0;
+		y = 0;
+	world = mansion;
+	xlow = 0;
+	xhigh = 5;
+	ylow = 0;
+	yhigh = 5;
+		
+	}
+break;
+
+case "t jeeves":
+	if (x == 0 && y == 0 && world == mansion){
+		document.getElementById("output").innerHTML = ("Well, it's time to go to bed. *** Type Y and click Enter to say yes.");
+	}
+break;
+
+case "y":
+	if (x == 0 && y == 0 && world == mansion && wolfBattleEvent == false){
+	
+		document.getElementById("output").innerHTML = ("You go to sleep in the weird mansion. Suddenly, you hear the Werewolf making noise in the kitchen.");
+		setTimeout(wolfbattle, 5000);
+}
+
+break;
+
+case "g cinderblock":
+if (x == 0 && y == 0 && world == mansion && cblockstate1 == true) {
+	document.getElementById("output").innerHTML = ("You got the cinderblock.");
+	++cblockq;
+	Inventory[5] = "cinderblock " + cblockq;
+	cblock1 = "      ";
+	cblockstate1 = false;
+}
+
+if (x == 0 && y == 3 && world == mansion && cblockstate2 == true) {
+	document.getElementById("output").innerHTML = ("You got the cinderblock.");
+	++cblockq;
+	Inventory[5] = "cinderblock " + cblockq;
+	cblock2 = "      ";
+	cblockstate2 = false;
+}
+
+if (x == 5 && y == 2 && world == mansion && cblockstate3 == true) {
+	document.getElementById("output").innerHTML = ("You got the cinderblock.");
+	++cblockq;
+	Inventory[5] = "cinderblock " + cblockq;
+	cblock3 = "      ";
+	cblockstate3 = false;
+}
+break;
+
+case "u wine": {
+	if (x == 1 && y == 3 && world == mansion) {
+		document.getElementById("output").innerHTML = ("You place the wine next to the sleeping Werewolf.");
+		Inventory[6] = " ";
+		wineState = true;
+		wineItemState2 = true;
+
+	}
+
+}
+break;
+
+case "u cinderblock": {
+
+if (x == 2 && y == 2 && cblockq > 0 && world == mansion) {
+	--cblockq;
+	Inventory[5] = "cinderblock " + cblockq;
+		if (cblockq == 0) {
+			Inventory[5] = " ";
+		}
+	document.getElementById("output").innerHTML = ("You place a cinderblock on top of the trash can.");
+	++cblockkitchen;
+	mansion[2][2] = " a kitchen with a huge trash can. There are " + cblockkitchen + " cinder blocks sitting on top of it."; 
+}
+break;
+
+}
+
+}
+}		
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+</body>
+
+</html>
