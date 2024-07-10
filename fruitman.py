@@ -1,2 +1,0 @@
-notes
-print("hello world")
